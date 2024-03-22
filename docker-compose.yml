@@ -1,4 +1,3 @@
-version: '3.5'
 services:
   scraper:
     build: .
@@ -11,7 +10,6 @@ services:
       - /etc/localtime:/etc/localtime:ro
   metabase-app:
     image: metabase/metabase:latest
-#    image: metabase/metabase:v0.43.1
     container_name: metabase
     hostname: metabase
     volumes:

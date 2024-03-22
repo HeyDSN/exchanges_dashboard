@@ -199,7 +199,7 @@ class Repository:
                     "incomeType": income.type,
                     "income": income.income,
                     "asset": income.asset,
-                    "time": datetime.utcfromtimestamp(income.timestamp / 1000),
+                    "time": datetime.utcfromtimestamp(int(income.timestamp) / 1000), # Fix cctx timestamp string
                     "timestamp": income.timestamp,
                     "account": account}
                     for income in incomes],
@@ -222,7 +222,7 @@ class Repository:
                     "quantity": trade.quantity,
                     "price": trade.price,
                     "side": trade.side,
-                    "time": datetime.utcfromtimestamp(trade.timestamp / 1000),
+                    "time": datetime.utcfromtimestamp(int(trade.timestamp) / 1000), # Fix cctx timestamp string
                     "timestamp": trade.timestamp,
                     "account": account}
                     for trade in trades],
