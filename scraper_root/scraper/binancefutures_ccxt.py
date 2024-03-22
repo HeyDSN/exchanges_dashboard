@@ -115,7 +115,6 @@ class BinanceFuturesCCXT:
                             transaction_id=exchange_income["tranId"],
                         )
                         incomes.append(income)
-                    logger.info(f"X {incomes[0]}")
                     self.repository.process_incomes(incomes, account=self.account.alias)
                     if len(exchange_incomes) < 1:
                         first_trade_reached = True
@@ -163,7 +162,6 @@ class BinanceFuturesCCXT:
                             transaction_id=exchange_income["tranId"],
                         )
                         incomes.append(income)
-                    logger.info(f"Z {incomes}")
                     self.repository.process_incomes(incomes, account=self.account.alias)
                     if len(exchange_incomes) < 1:
                         newest_trade_reached = True
