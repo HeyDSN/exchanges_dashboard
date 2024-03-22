@@ -261,7 +261,12 @@ class BinanceFuturesCCXT:
                 open_orders = self.exchange.fetch_open_orders()
                 for open_order in open_orders:
                     order = Order()
-                    order.symbol = open_order["symbol"].upper().replace("/", "").replace(":USDT", "")
+                    order.symbol = (
+                        open_order["symbol"]
+                        .upper()
+                        .replace("/", "")
+                        .replace(":USDT", "")
+                    )
                     order.price = float(open_order["price"])
                     order.quantity = float(open_order["amount"])
                     order.side = open_order["side"].upper()
