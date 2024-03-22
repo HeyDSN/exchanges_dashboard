@@ -5,7 +5,8 @@ from types import SimpleNamespace
 from typing import List
 
 import hjson
-from scraper.binancefutures import BinanceFutures
+# from scraper.binancefutures import BinanceFutures
+from scraper.binancefutures_ccxt import BinanceFuturesCCXT
 from scraper.bybitderivatives import BybitDerivatives
 from scraper.bitgetfutures import BitgetFutures
 from scraper_root.scraper.binancespot import BinanceSpot
@@ -43,7 +44,7 @@ if __name__ == '__main__':
     scraper = None
     for account in scraper_config.accounts:
         if account.exchange == 'binance_futures':
-            scraper = BinanceFutures(account=account, symbols=scraper_config.symbols, repository=repository)
+            scraper = BinanceFuturesCCXT(account=account, symbols=scraper_config.symbols, repository=repository)
         elif account.exchange == 'binance_spot':
             scraper = BinanceSpot(account=account, symbols=scraper_config.symbols, repository=repository)
         elif account.exchange == 'bybit_derivatives':
