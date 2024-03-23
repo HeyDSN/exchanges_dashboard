@@ -261,12 +261,17 @@ class BinanceFuturesCCXT:
                 open_orders = self.exchange.fetch_open_orders()
                 for open_order in open_orders:
                     order = Order()
-                    order.symbol = open_order["symbol"].upper()
+                    order.symbol = (
+                        open_order["symbol"]
+                        .upper()
+                        .replace("/", "")
+                        .replace(":USDT", "")
+                    )
                     order.price = float(open_order["price"])
                     order.quantity = float(open_order["amount"])
                     order.side = open_order["side"].upper()
                     order.position_side = open_order["info"]["positionSide"].upper()
-                    order.type = open_order["type"]
+                    order.type = open_order["type"].capitalize()
                     orders.append(order)
                 self.repository.process_orders(orders, account=self.account.alias)
                 logger.warning(f"Synced orders")
