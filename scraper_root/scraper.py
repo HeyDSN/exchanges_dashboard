@@ -56,12 +56,11 @@ if __name__ == '__main__':
         else:
             raise Exception(f'Encountered unsupported exchange {account.exchange}')
 
-        logger.info(f'Initialized scraper for account {account.alias} ({account.exchange})')
-        time.sleep(30)
-
         try:
             scraper.start()
             logger.info(f'Started scraping account {account.alias} ({account.exchange})')
+            time.sleep(30)
+            logger.info(f'Wait 30 seconds before starting the next account')
         except Exception as e:
             logger.error(f"Failed to start exchange: {e}")
 

@@ -32,6 +32,7 @@ class BinanceFuturesCCXT:
     ):
         print("Binance initialized")
         self.account = account
+        self.alias = self.account.alias
         self.symbols = symbols
         self.api_key = self.account.api_key
         self.secret = self.account.api_secret
@@ -44,7 +45,7 @@ class BinanceFuturesCCXT:
         self.exchange.options["warnOnFetchOpenOrdersWithoutSymbol"] = False
 
     def start(self):
-        logger.info("Starting binance futures scraper")
+        logger.info(f"{self.alias}: Starting binance futures scraper")
 
         for symbol in self.symbols:
             symbol_trade_thread = threading.Thread(
@@ -88,13 +89,13 @@ class BinanceFuturesCCXT:
                         )
                     else:
                         oldest_timestamp = oldest_income.timestamp
-                        logger.warning(f"Synced trades before {oldest_timestamp}")
+                        logger.info(f"{self.alias}: Synced trades before {oldest_timestamp}")
 
                     exchange_incomes = self.exchange.fapiprivate_get_income(
                         {"limit": 1000, "endTime": oldest_timestamp - 1}
                     )
                     logger.info(
-                        f"Length of older trades fetched up to {oldest_timestamp}: {len(exchange_incomes)}"
+                        f"{self.alias}: Length of older trades fetched up to {oldest_timestamp}: {len(exchange_incomes)}"
                     )
                     incomes = []
                     for exchange_income in exchange_incomes:
@@ -135,13 +136,13 @@ class BinanceFuturesCCXT:
                         )
                     else:
                         newest_timestamp = newest_income.timestamp
-                        logger.warning(f"Synced newer trades since {newest_timestamp}")
+                        logger.info(f"{self.alias}: Synced newer trades since {newest_timestamp}")
 
                     exchange_incomes = self.exchange.fapiprivate_get_income(
                         {"limit": 1000, "startTime": newest_timestamp + 1}
                     )
                     logger.info(
-                        f"Length of newer trades fetched from {newest_timestamp}: {len(exchange_incomes)}"
+                        f"{self.alias}: Length of newer trades fetched from {newest_timestamp}: {len(exchange_incomes)}"
                     )
                     incomes = []
                     for exchange_income in exchange_incomes:
@@ -166,9 +167,9 @@ class BinanceFuturesCCXT:
                     if len(exchange_incomes) < 1:
                         newest_trade_reached = True
 
-                logger.warning("Synced trades")
+                logger.info(f"{self.alias}: Synced trades")
             except Exception as e:
-                logger.error(f"{self.account.alias} Failed to process trades: {e}")
+                logger.error(f"{self.alias}: Failed to process trades: {e}")
 
             time.sleep(150)
 
@@ -212,7 +213,7 @@ class BinanceFuturesCCXT:
                 )
 
                 logger.info(
-                    f"Wallet balance: {total_wallet_balance}, upnl: {total_upnl}"
+                    f"{self.alias}: Wallet balance: {total_wallet_balance}, upnl: {total_upnl}"
                 )
 
                 balance = Balance(
@@ -247,11 +248,11 @@ class BinanceFuturesCCXT:
                             timestamp=int(retrieved_tick["timestamp"]),
                         )
                         self.repository.process_tick(tick, account=self.account.alias)
-                        logger.debug(f"Synced recent trade price for {symbol}")
+                        logger.debug(f"{self.alias}: Synced recent trade price for {symbol}")
 
-                logger.warning("Synced account")
+                logger.info(f"{self.alias}: Synced account")
             except Exception as e:
-                logger.error(f"{self.account.alias} Failed to process balance: {e}")
+                logger.error(f"{self.alias}: Failed to process balance: {e}")
             time.sleep(150)
 
     def sync_open_orders(self):
@@ -274,11 +275,11 @@ class BinanceFuturesCCXT:
                     order.type = open_order["type"].capitalize()
                     orders.append(order)
                 self.repository.process_orders(orders, account=self.account.alias)
-                logger.warning(f"Synced orders")
+                logger.info(f"{self.alias}: Synced orders")
 
             except Exception as e:
                 logger.error(
-                    f"{self.account.alias} Failed to process open orders for symbol: {e}"
+                    f"{self.alias}: Failed to process open orders for symbol: {e}"
                 )
 
             time.sleep(150)
@@ -295,5 +296,5 @@ class BinanceFuturesCCXT:
                 )
                 self.repository.process_tick(tick, account=self.account.alias)
             except Exception as e:
-                logger.warning(f"Error processing tick: {e}")
+                logger.warning(f"{self.alias}: Error processing tick: {e}")
             time.sleep(150)

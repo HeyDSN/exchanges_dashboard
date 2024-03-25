@@ -29,7 +29,7 @@ def is_asset_usd_or_derivative(symbol: str):
 
 class BybitDerivatives:
     def __init__(self, account: Account, symbols: List[str], repository: Repository, unified_account: bool):
-        logger.info(f"Bybit initializing")
+        logger.info(f"{self.alias}: Bybit initializing")
         self.account = account
         self.unified_account = unified_account
         self.alias = self.account.alias
@@ -110,7 +110,7 @@ class BybitDerivatives:
                                   totalUnrealizedProfit=total_upnl,
                                   assets=balances)
                 self.repository.process_balances(balance=balance, account=self.alias)
-                logger.warning(f'{self.alias}: Synced balance')
+                logger.info(f'{self.alias}: Synced balance')
                 time.sleep(150)
             except Exception as e:
                 logger.error(f'{self.alias}: Failed to process balance: {e}')
@@ -141,7 +141,7 @@ class BybitDerivatives:
                                                   initial_margin=0.0)  # TODO: float(x['position_margin'])
                                          )
                 self.repository.process_positions(positions=positions, account=self.alias)
-                logger.warning(f'{self.alias}: Synced positions')
+                logger.info(f'{self.alias}: Synced positions')
                 # logger.info(f'test: {self.activesymbols}')
                 time.sleep(250)
             except Exception as e:
@@ -182,7 +182,7 @@ class BybitDerivatives:
                     except:
                         logger.exception(f'{self.alias}: Failed to process orders')
                         time.sleep(150)
-                logger.warning(f'{self.alias}: Synced orders')
+                logger.info(f'{self.alias}: Synced orders')
                 self.repository.process_orders(orders=orders, account=self.alias)
             time.sleep(150)  # pause after 1 complete run
 
@@ -250,10 +250,10 @@ class BybitDerivatives:
                         oldest_timestamp = int(datetime.datetime.now(datetime.timezone.utc).timestamp() * 1000)
                     else:
                         oldest_timestamp = oldest_income.timestamp
-                        logger.warning(f'Synced trades before {readable(oldest_timestamp)}')
+                        logger.info(f'{self.alias}: Synced trades before {readable(oldest_timestamp)}')
 
                     exchange_incomes = self.rest_manager2.get_closed_pnl(category="linear", limit='100', startTime=oldest_timestamp - one_day_ms, endTime=oldest_timestamp - 1)
-                    logger.info(f"Length of older trades fetched up to {readable(oldest_timestamp)}: {len(exchange_incomes['result']['list'])}")
+                    logger.info(f"{self.alias}: Length of older trades fetched up to {readable(oldest_timestamp)}: {len(exchange_incomes['result']['list'])}")
                     incomes = []
 
                     for exchange_income in exchange_incomes['result']['list']:
@@ -307,10 +307,10 @@ class BybitDerivatives:
                         newest_timestamp = int(datetime.datetime.fromisoformat('2020-01-01 00:00:00+00:00').timestamp() * 1000)
                     else:
                         newest_timestamp = newest_income.timestamp
-                        logger.warning(f'Synced newer trades since {readable(newest_timestamp)}')
+                        logger.info(f'{self.alias}: Synced newer trades since {readable(newest_timestamp)}')
 
                     exchange_incomes = self.rest_manager2.get_closed_pnl(category="linear", limit='100', startTime=newest_timestamp + 1)
-                    logger.info(f"Length of newer trades fetched from {readable(newest_timestamp)}: {len(exchange_incomes['result']['list'])}")
+                    logger.info(f"{self.alias}: Length of newer trades fetched from {readable(newest_timestamp)}: {len(exchange_incomes['result']['list'])}")
                     incomes = []
                     for exchange_income in exchange_incomes['result']['list']:
                         asset = self.get_asset(exchange_income['symbol'])
@@ -351,9 +351,9 @@ class BybitDerivatives:
                     if len(incomes) < 1:
                         newest_trade_reached = True
 
-                logger.warning('Synced trades')
+                logger.info(f'{self.alias}: Synced trades')
             except Exception as e:
-                logger.exception(f'{self.account.alias} Failed to process trades: {e}')
+                logger.exception(f'{self.alias} Failed to process trades: {e}')
 
             time.sleep(150)
 
@@ -380,5 +380,5 @@ class BybitDerivatives:
                 self.asset_symbol[symbol] = self.rest_manager2.get_instruments_info(category="linear", symbol=symbol)['result']['list'][0]['quoteCoin']
                 return self.asset_symbol[symbol]
             except:
-                logger.exception(f"Failed to retrieve quoteCoin for symbol {symbol}, falling back to USDT")
+                logger.exception(f"{self.alias}: Failed to retrieve quoteCoin for symbol {symbol}, falling back to USDT")
                 return 'USDT'
