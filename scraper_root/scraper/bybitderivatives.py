@@ -29,7 +29,7 @@ def is_asset_usd_or_derivative(symbol: str):
 
 class BybitDerivatives:
     def __init__(self, account: Account, symbols: List[str], repository: Repository, unified_account: bool):
-        logger.info(f"{self.alias}: Bybit initializing")
+        logger.info("Bybit initializing")
         self.account = account
         self.unified_account = unified_account
         self.alias = self.account.alias
