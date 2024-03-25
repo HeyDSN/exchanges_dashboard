@@ -111,7 +111,7 @@ class BybitDerivatives:
                                   assets=balances)
                 self.repository.process_balances(balance=balance, account=self.alias)
                 logger.warning(f'{self.alias}: Synced balance')
-                time.sleep(100)
+                time.sleep(150)
             except Exception as e:
                 logger.error(f'{self.alias}: Failed to process balance: {e}')
                 time.sleep(360)
@@ -181,10 +181,10 @@ class BybitDerivatives:
                             orders.append(order)
                     except:
                         logger.exception(f'{self.alias}: Failed to process orders')
-                        time.sleep(30)
+                        time.sleep(150)
                 logger.warning(f'{self.alias}: Synced orders')
                 self.repository.process_orders(orders=orders, account=self.alias)
-            time.sleep(120)  # pause after 1 complete run
+            time.sleep(150)  # pause after 1 complete run
 
     # #WS stream bybit; for future use, cannot limit ws stream
     #     def process_trades(self, symbol: str):
@@ -229,10 +229,10 @@ class BybitDerivatives:
                                 timestamp=int(event1['time']))
                     self.repository.process_tick(tick=tick, account=self.alias)
                 logger.info(f"{self.alias}: Processed ticks")
-                time.sleep(60)
+                time.sleep(150)
             except Exception as e:
                 logger.warning(f'{self.alias}: Failed to process ticks: {e}')
-                time.sleep(120)
+                time.sleep(150)
                 pass
 
     def sync_trades(self):
@@ -355,7 +355,7 @@ class BybitDerivatives:
             except Exception as e:
                 logger.exception(f'{self.account.alias} Failed to process trades: {e}')
 
-            time.sleep(60)
+            time.sleep(150)
 
     def income_to_usdt(self, income: float, income_timestamp: int, asset: str) -> float:
         if is_asset_usd_or_derivative(asset):
